@@ -7,9 +7,18 @@
   "_layout": "left",
   "title": "A sliding puzzle",
   "body": "Click/touch a tile to move it",
+  "dimensionX": 3,
+  "dimensionY": 3,
+  "allowSkip": false,
   "graphic": {
     "alt": "alt text",
     "title": "title text",
-    "src": "course/en/images/puzzle.jpg"
+    "large": "course/en/images/puzzle.jpg",
+    "medium": "course/en/images/puzzle.jpg",
+    "small": "course/en/images/puzzle.jpg"
+  },
+  "buttons":{
+    "reset":"Reset",
+    "showCorrectAnswer":"Show Answer"
   }
 }

@@ -15,7 +15,20 @@
   </div>
   {{/if}}
   <div class="slidingPuzzle-widget component-widget">
-    <canvas></canvas>
+    <div class="slidingPuzzle-item item">
+      <canvas class="slidingPuzzle-canvas"></canvas>
+      <img class="slidingPuzzle-source-graphic" src="" data-large="{{graphic.large}}" data-medium="{{graphic.medium}}" data-small="{{graphic.small}}" />
+    </div>
+    <a href="#" class="button reset">
+      <span>
+        {{{buttons.reset}}}
+      </span>
+    </a>
+    <a href="#" class="button model">
+      <span>
+        {{{buttons.showCorrectAnswer}}}
+      </span>
+    </a>
   </div>
 </div>
 
