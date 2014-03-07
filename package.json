@@ -1,0 +1,23 @@
+{
+  "name": "adapt-slidingPuzzle",
+  "version": "0.0.0",
+  "description": "A html5 canvas based sliding puzzle component",
+  "main": "",
+  "scripts": {
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dennis-learningpool/adapt-slidingPuzzle.git"
+  },
+  "author": "Dennis Heaney",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/dennis-learningpool/adapt-slidingPuzzle/issues"
+  },
+  "devDependencies": {
+    "karma": "~0.9",
+    "karma-mocha": "*",
+    "karma-expect": "*"
+  }
+}

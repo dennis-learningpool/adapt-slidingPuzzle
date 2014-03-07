@@ -1,0 +1,21 @@
+{{! Maintainers - Dennis Heaney}}
+<div class="slidingPuzzle-inner component-inner">
+  {{#if title}}
+  <div class="slidingPuzzle-title component-title">
+    <h4 class="slidingPuzzle-title-inner component-title-inner">
+      {{{title}}}
+    </h4>
+  </div>
+  {{/if}}
+  {{#if body}}
+  <div class="slidingPuzzle-body component-body">
+    <div class="slidingPuzzle-body-inner component-body-inner">
+      {{{body}}}
+    </div>
+  </div>
+  {{/if}}
+  <div class="slidingPuzzle-widget component-widget">
+    <canvas></canvas>
+  </div>
+</div>
+

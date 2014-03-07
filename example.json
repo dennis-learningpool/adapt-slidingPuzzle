@@ -1,0 +1,15 @@
+{
+  "_id": "c-30",
+  "_parentId": "b-15",
+  "_type": "component",
+  "_component": "slidingPuzzle",
+  "_classes": "",
+  "_layout": "left",
+  "title": "A sliding puzzle",
+  "body": "Click/touch a tile to move it",
+  "graphic": {
+    "alt": "alt text",
+    "title": "title text",
+    "src": "course/en/images/puzzle.jpg"
+  }
+}
