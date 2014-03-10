@@ -6,7 +6,9 @@
   ],
   "description": "A html5 canvas based sliding puzzle component",
   "main": "/js/adapt-slidingPuzzle.js",
+  "repository": "git@github.com:dennis-learningpool/adapt-slidingPuzzle.git",
   "keywords": [
+    "adapt-plugin",
     "adapt-component"
   ],
   "license": "GPLv3",
