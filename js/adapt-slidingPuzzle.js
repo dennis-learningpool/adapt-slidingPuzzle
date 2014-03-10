@@ -87,8 +87,8 @@ define(function(require) {
       // set up the puzzle board
       canvas.setAttribute('width', this.img.width);
       canvas.setAttribute('height', this.img.height);
-      this._columns = this.model.get('dimensionX') || this._columns;
-      this._rows = this.model.get('dimensionY') || this._rows;
+      this._columns = this.model.get('dimension') || this._columns;
+      this._rows = this.model.get('dimension') || this._rows;
       this._tiles = this.fetchTiles(this.img.width, this.img.height, this._columns, this._rows);
 
       // show/hide buttons

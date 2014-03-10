@@ -7,8 +7,7 @@
   "_layout": "left",
   "title": "A sliding puzzle",
   "body": "Click/touch a tile to move it",
-  "dimensionX": 3,
-  "dimensionY": 3,
+  "dimension": 3,
   "allowSkip": false,
   "graphic": {
     "alt": "alt text",
