@@ -11,8 +11,11 @@ define(function(require) {
   // sliding tile object
   function SlidingTile (options) {
     return _.extend({
-        x: 0, // actual x position on canvas
-        y: 0, // actual y position on canvas
+        className: 'slidingPuzzle-tile',
+        src: null, // the image to use in the source
+        el: null,
+        x: 0, // actual x position on puzzle
+        y: 0, // actual y position on puzzle
         srcX: 0, // x position on image of this tile
         srcY: 0, // y position on image of this tile
         width: 0,
@@ -21,18 +24,75 @@ define(function(require) {
         row: -1, // correct row of this tile
         visible: true, // if true, draw this tile
         target: {},
-        draw: function (ctx, img) {
-          if (this.visible) {
-            ctx.drawImage(img, this.srcX, this.srcY, this.width, this.height, this.x, this.y, this.width, this.height);
+
+        /**
+         * returns a comma separated rect spec suitable for
+         * use in a css clip style
+         */
+        getRect: function () {
+          return [
+            this.srcY + 'px',
+            this.srcX + this.width + 'px',
+            this.srcY + this.height + 'px',
+            this.srcX + 'px'
+          ].join(',');
+        },
+
+        /**
+         * builds the img element for this tile and returns it
+         * ready for use in $.append
+         */
+        renderElement: function (container) {
+          // remove img if already rendered
+          if (this.el) {
+            this.el.remove();
+          }
+
+          // create image element
+          var img = $('<img>');
+          img.attr('src', this.src);
+          img.css('clip', 'rect(' + this.getRect() + ')');
+          img.css('left', -this.srcX + 'px');
+          img.css('top', -this.srcY + 'px');
+
+          // create element (the tile)
+          var el = $('<div>');
+          el.attr('class', this.className);
+          el.css('left', this.x);
+          el.css('top', this.y);
+          this.el = el;
+
+          this.el.append(img);
+          this.setVisible(this.visible);
+
+          container.append(this.el);
+
+          return this.el;
+        },
+
+        /**
+         * toggles display of the tile
+         */
+        setVisible: function (visible) {
+          this.visible = visible;
+          if (this.el) {
+            this.el.css('opacity', (this.visible ? '100' : '0'));
           }
         },
+
+        /**
+         * sets the target x and y for this tile
+         *
+         */
         setTarget: function (target) {
           this.target.x = target.x;
           this.target.y = target.y;
 
           // immediately set to position
-          this.x = this.target.x;
-          this.y = this.target.y;
+          if (this.el) {
+            this.el.css('left', this.target.x);
+            this.el.css('top', this.target.y);
+          }
         }
       }, options);
   }
@@ -40,7 +100,7 @@ define(function(require) {
   var SlidingPuzzle = ComponentView.extend({
 
     events: {
-      'click .slidingPuzzle-canvas': 'attemptMove',
+      'click .slidingPuzzle-puzzle': 'attemptMove',
       'click .slidingPuzzle-widget .button.reset': 'onResetClicked',
       'click .slidingPuzzle-widget .button.model': 'onShowSolutionClicked'
     },
@@ -55,12 +115,16 @@ define(function(require) {
 
     context: false,
 
+    _debounceTime: 250,
+
+    _debouncing: false,
+
     preRender: function () {
       this.listenTo(Adapt, 'device:changed', this.resizePuzzle);
     },
 
     postRender: function () {
-      this.resizePuzzle(Adapt.device.screenSize)
+      this.resizePuzzle(Adapt.device.screenSize);
     },
 
     resizePuzzle: function (width) {
@@ -74,22 +138,16 @@ define(function(require) {
 
     resetPuzzle: function (img) {
       var graphic = this.model.get('graphic');
-      var canvas = this.$('.slidingPuzzle-canvas').get(0);
-      this.context = canvas.getContext && canvas.getContext('2d');
+      var puzzle = this.$('.slidingPuzzle-puzzle');
+      puzzle.html('');
       this.img = img;
 
-      if (!this.context) {
-        $(canvas).before('<span>Unable to render puzzle!</span>');
-        this.setReadyStatus();
-        return;
-      }
-
       // set up the puzzle board
-      canvas.setAttribute('width', this.img.width);
-      canvas.setAttribute('height', this.img.height);
+      puzzle.css('width', this.img.width + 'px');
+      puzzle.css('height', this.img.height + 'px');
       this._columns = this.model.get('dimension') || this._columns;
       this._rows = this.model.get('dimension') || this._rows;
-      this._tiles = this.fetchTiles(this.img.width, this.img.height, this._columns, this._rows);
+      this._tiles = this.fetchTiles(this.img, this._columns, this._rows);
 
       // show/hide buttons
       this.$('.slidingPuzzle-widget .button.reset').hide();
@@ -97,7 +155,13 @@ define(function(require) {
         this.$('.slidingPuzzle-widget .button.model').show();
       }
 
-      this.drawTiles();
+      this.renderTiles(puzzle);
+
+      // get debounce time from transition time
+      var transTime = parseFloat(this.$('.slidingPuzzle-tile').first().css('transition-duration'), 10);
+      this._debounceTime = transTime ? transTime * 1000 : this._debounceTime;
+
+
       this.setReadyStatus();
     },
 
@@ -105,31 +169,29 @@ define(function(require) {
       for (var row = 0; row < this._tiles.length; ++row) {
         for (var col = 0; col < this._tiles[row].length; ++col) {
           var tile = this._tiles[row][col];
-          tile.x = tile.srcX;
-          tile.y = tile.srcY;
-          tile.visible = true;
+          tile.setTarget({x:tile.srcX, y:tile.srcY});
+          tile.setVisible(true);
         }
       }
     },
 
-    drawTiles: function () {
-      this.context.clearRect(0, 0, this.img.width, this.img.height);
+    renderTiles: function (el) {
       for (var row = 0; row < this._tiles.length; ++row) {
         for (var col = 0; col < this._tiles[row].length; ++col) {
-          this._tiles[col][row].draw(this.context, this.img);
+          this._tiles[col][row].renderElement(el);
         }
       }
     },
 
-    fetchTiles: function (imgWidth, imgHeight, dimensionX, dimensionY) {
+    fetchTiles: function (img, dimensionX, dimensionY) {
       var tiles = [];
-      var tileWidth = Math.floor(imgWidth / (dimensionX || 1));
-      var tileHeight = Math.floor(imgHeight / (dimensionY || 1));
+      var tileWidth = Math.floor(img.width / (dimensionX || 1));
+      var tileHeight = Math.floor(img.height / (dimensionY || 1));
       var col = 0;
       var row = 0;
       for (col = 0; col < dimensionX; ++col) {
         for (row = 0; row < dimensionY; ++row) {
-          tiles.push(new SlidingTile({ srcX: col*tileWidth, srcY: row*tileHeight, width: tileWidth, height: tileHeight, column: col, row: row }));
+          tiles.push(new SlidingTile({ src: img.src, srcX: col*tileWidth, srcY: row*tileHeight, width: tileWidth, height: tileHeight, column: col, row: row }));
         }
       }
 
@@ -145,9 +207,9 @@ define(function(require) {
         if (tiles.length !== 0) {
           t.x = col * t.width;
           t.y = row * t.height;
-          t.visible = true;
+          t.setVisible(true);
         } else {
-          t.visible = false; // make the last tile invisible
+          t.setVisible(false); // make the last tile invisible
         }
         randomTiles[row].push(t);
         ++index;
@@ -157,7 +219,10 @@ define(function(require) {
     },
 
     attemptMove: function (e) {
-      var puzzlePos = this.$('.slidingPuzzle-canvas').offset();
+      if (this._debouncing) {
+        return;
+      }
+      var puzzlePos = this.$('.slidingPuzzle-puzzle').offset();
       var mouseX = e.pageX - Math.round(puzzlePos.left);
       var mouseY = e.pageY - Math.round(puzzlePos.top);
       var cellX = Math.floor(mouseX/this.img.width * this._columns);
@@ -223,6 +288,7 @@ define(function(require) {
               }
             }
           }
+          this.debounce();
         }
 
         // assess completion!
@@ -230,9 +296,12 @@ define(function(require) {
           // w00t! player got skillz
           this.solve();
         }
-
-        this.drawTiles();
       }
+    },
+
+    debounce: function () {
+      this._debouncing = true;
+      setTimeout(_.bind(function () { this._debouncing = false; }, this), this._debounceTime);
     },
 
     solve: function () {
@@ -250,7 +319,6 @@ define(function(require) {
     onShowSolutionClicked: function (e) {
       e.preventDefault();
       this.solve();
-      this.drawTiles();
     },
 
     swapTiles: function (row1, col1, row2, col2) {

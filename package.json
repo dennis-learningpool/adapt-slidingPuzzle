@@ -1,7 +1,7 @@
 {
   "name": "adapt-slidingPuzzle",
-  "version": "0.0.4",
-  "description": "A html5 canvas based sliding puzzle component",
+  "version": "0.1.0",
+  "description": "An html5 sliding puzzle component",
   "main": "",
   "scripts": {
     "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"

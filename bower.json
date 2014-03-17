@@ -1,10 +1,10 @@
 {
   "name": "adapt-slidingPuzzle",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "authors": [
     "Dennis Heaney <dennis@learningpool.com>"
   ],
-  "description": "A html5 canvas based sliding puzzle component",
+  "description": "An html5 sliding puzzle component",
   "main": "/js/adapt-slidingPuzzle.js",
   "repository": "git://github.com/dennis-learningpool/adapt-slidingPuzzle.git",
   "keywords": [
