@@ -14,30 +14,36 @@
       "default": false
     },
     "graphic": {
-      "alt": {
-        "type":"string"
-      },
-      "title": {
-        "type": "string"
-      },
-      "large": {
-        "type": "string"
-      },
-      "medium": {
-        "type": "string"
-      },
-      "small": {
-        "type": "string"
+      "type": "object",
+      "properties": {
+        "alt": {
+          "type":"string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "large": {
+          "type": "string"
+        },
+        "medium": {
+          "type": "string"
+        },
+        "small": {
+          "type": "string"
+        }
       }
     },
     "buttons": {
-      "reset": {
-        "type": "string",
-        "default": "Reset"
-      },
-      "showCorrectAnswer": {
-        "type": "string",
-        "default": "Show Answer"
+      "type":"object",
+      "properties": {
+        "reset": {
+          "type": "string",
+          "default": "Reset"
+        },
+        "showCorrectAnswer": {
+          "type": "string",
+          "default": "Show Answer"
+        }
       }
     }
   }
