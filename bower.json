@@ -1,6 +1,8 @@
 {
   "name": "adapt-slidingPuzzle",
-  "version": "0.1.3",
+  "version": "0.1.4",
+  "displayName": "Sliding Puzzle",
+  "component": "slidingPuzzle",
   "authors": [
     "Dennis Heaney <dennis@learningpool.com>"
   ],
