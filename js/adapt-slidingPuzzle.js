@@ -51,6 +51,7 @@ define(function(require) {
           // create image element
           var img = $('<img>');
           img.attr('src', this.src);
+          img.attr('draggable', 'false');
           img.css('clip', 'rect(' + this.getRect() + ')');
           img.css('left', -this.srcX + 'px');
           img.css('top', -this.srcY + 'px');
@@ -100,7 +101,7 @@ define(function(require) {
   var SlidingPuzzle = ComponentView.extend({
 
     events: {
-      'click .slidingPuzzle-puzzle': 'attemptMove',
+      'mousedown .slidingPuzzle-puzzle': 'attemptMove',
       'click .slidingPuzzle-widget .button.reset': 'onResetClicked',
       'click .slidingPuzzle-widget .button.model': 'onShowSolutionClicked'
     },
